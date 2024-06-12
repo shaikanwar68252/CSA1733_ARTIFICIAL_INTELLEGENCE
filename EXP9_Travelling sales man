@@ -1,0 +1,29 @@
+from itertools import permutations
+
+def tsp_brute_force(graph, start):
+    all_nodes = set(graph.keys())
+    all_nodes.remove(start)
+    min_path = None
+    min_dist = float('inf')
+
+    for path_permutation in permutations(all_nodes):
+        path = (start,) + path_permutation + (start,)
+        dist = sum(graph[path[i]][path[i + 1]] for i in range(len(path) - 1))
+        
+        if dist < min_dist:
+            min_dist = dist
+            min_path = path
+
+    return min_path, min_dist
+
+# Example Usage
+graph = {
+    'A': {'B': 10, 'C': 15, 'D': 20},
+    'B': {'A': 10, 'C': 35, 'D': 25},
+    'C': {'A': 15, 'B': 35, 'D': 30},
+    'D': {'A': 20, 'B': 25, 'C': 30}
+}
+
+start_node = 'A'
+min_path, min_dist = tsp_brute_force(graph, start_node)
+print(f"Minimum Path: {min_path}, Minimum Distance: {min_dist}")
