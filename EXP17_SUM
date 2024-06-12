@@ -1,0 +1,7 @@
+% Define the sum predicate
+sum_to_n(0, 0).  % Base case: The sum of integers from 1 to 0 is 0
+sum_to_n(N, Sum) :-
+    N > 0,       % Ensure N is positive
+    N1 is N - 1, % Decrement N
+    sum_to_n(N1, Sum1), % Recursive call
+    Sum is N + Sum1.    % Sum is N plus the sum of integers from 1 to N-1
