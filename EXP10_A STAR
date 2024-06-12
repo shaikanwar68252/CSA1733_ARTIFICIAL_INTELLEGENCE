@@ -1,0 +1,84 @@
+# Define the A* algorithm function
+def astar_algorithm(start, goal):
+    # Initialize the open and closed sets
+    open_set = [start]
+    closed_set = []
+
+    # Create a dictionary to store the g-score and f-score for each node
+    g_score = {start: 0}
+    f_score = {start: heuristic(start, goal)}
+    
+    # Create a dictionary to store the path
+    came_from = {}
+
+    while open_set:
+        # Find the node with the lowest f-score in the open set
+        current = min(open_set, key=lambda node: f_score[node])
+
+        # Check if the current node is the goal
+        if current == goal:
+            return reconstruct_path(came_from, goal)
+
+        # Move the current node from the open set to the closed set
+        open_set.remove(current)
+        closed_set.append(current)
+
+        # Explore the neighbors of the current node
+        for neighbor in get_neighbors(current):
+            # Calculate the tentative g-score for the neighbor
+            tentative_g_score = g_score[current] + distance(current, neighbor)
+
+            if neighbor in closed_set and tentative_g_score >= g_score.get(neighbor, float('inf')):
+                continue
+
+            if neighbor not in open_set or tentative_g_score < g_score.get(neighbor, float('inf')):
+                # Update the g-score and f-score for the neighbor
+                g_score[neighbor] = tentative_g_score
+                f_score[neighbor] = g_score[neighbor] + heuristic(neighbor, goal)
+                
+                # Record the path
+                came_from[neighbor] = current
+
+                if neighbor not in open_set:
+                    open_set.append(neighbor)
+
+    # If the goal is not reachable, return None
+    return None
+
+# Define the heuristic function
+def heuristic(node, goal):
+    # Calculate the Manhattan distance between the node and the goal
+    return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
+
+# Define the distance function
+def distance(node1, node2):
+    # Calculate the Euclidean distance between two nodes
+    return ((node1[0] - node2[0]) ** 2 + (node1[1] - node2[1]) ** 2) ** 0.5
+
+# Define the function to reconstruct the path
+def reconstruct_path(came_from, goal):
+    # Reconstruct the path from the goal to the start
+    path = [goal]
+    while goal in came_from:
+        goal = came_from[goal]
+        path.append(goal)
+    path.reverse()
+    return path
+
+# Define the function to get the neighbors of a node
+def get_neighbors(node):
+    # Return the neighbors of the node
+    neighbors = []
+    x, y = node
+    # Add the four cardinal directions
+    neighbors.append((x - 1, y))
+    neighbors.append((x + 1, y))
+    neighbors.append((x, y - 1))
+    neighbors.append((x, y + 1))
+    return neighbors
+
+# Test the A* algorithm
+start = (0, 0)
+goal = (5, 5)
+path = astar_algorithm(start, goal)
+print("Path:", path)
